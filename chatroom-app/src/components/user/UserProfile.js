@@ -51,7 +51,7 @@ const UserProfile = () => {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%)', padding: '0 16px', height: 58, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 2px 12px rgba(99,102,241,.2)' }}>
+      <div style={{ background: 'rgba(255,255,255,.04)', backdropFilter: 'blur(24px) saturate(1.4)', WebkitBackdropFilter: 'blur(24px) saturate(1.4)', borderBottom: '1px solid rgba(255,255,255,.08)', padding: '0 16px', height: 58, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 4px 24px rgba(0,0,0,.15)' }}>
         <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center', borderRadius: 8, transition: 'background .15s' }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
           onMouseLeave={e => e.currentTarget.style.background = 'none'}>
@@ -73,10 +73,14 @@ const UserProfile = () => {
         {!loading && !error && profile && (
           <div className="cr-card slide-up" style={{ overflow: 'hidden' }}>
             {/* Profile Header */}
-            <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%)', padding: '32px 24px', textAlign: 'center' }}>
-              <div className="avatar avatar-xl" style={{ background: getColor(profile.username), margin: '0 auto 12px', border: '3px solid rgba(255,255,255,.3)' }}>
-                {(profile.username || 'U').charAt(0).toUpperCase()}
-              </div>
+            <div style={{ background: 'linear-gradient(135deg, rgba(99,102,241,.2) 0%, rgba(139,92,246,.15) 100%)', padding: '32px 24px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,.06)' }}>
+              {profile.profilePicture ? (
+                <img src={`${API_URL}${profile.profilePicture}`} alt={profile.username} style={{ width: 88, height: 88, borderRadius: '50%', objectFit: 'cover', margin: '0 auto 12px', display: 'block', border: '3px solid rgba(255,255,255,.2)' }} />
+              ) : (
+                <div className="avatar avatar-xl" style={{ background: getColor(profile.username), margin: '0 auto 12px', border: '3px solid rgba(255,255,255,.2)' }}>
+                  {(profile.username || 'U').charAt(0).toUpperCase()}
+                </div>
+              )}
               <h3 style={{ color: '#fff', fontWeight: 700, margin: '0 0 4px' }}>{profile.username}</h3>
               <p style={{ color: 'rgba(255,255,255,.8)', margin: 0, fontSize: '.9rem' }}>{profile.email}</p>
             </div>
@@ -84,13 +88,13 @@ const UserProfile = () => {
             {/* Details */}
             <div style={{ padding: 24 }}>
               <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-                <div style={{ flex: 1, padding: '14px 16px', background: '#f8f9fa', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ flex: 1, padding: '14px 16px', background: 'rgba(255,255,255,.04)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(255,255,255,.06)' }}>
                   <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)', marginBottom: 4 }}>Friend Code</div>
-                  <div style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1rem', letterSpacing: 1 }}>{profile.uniqueCode}</div>
+                  <div style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1rem', letterSpacing: 1, color: '#a5b4fc' }}>{profile.uniqueCode}</div>
                 </div>
-                <div style={{ flex: 1, padding: '14px 16px', background: '#f8f9fa', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ flex: 1, padding: '14px 16px', background: 'rgba(255,255,255,.04)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(255,255,255,.06)' }}>
                   <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)', marginBottom: 4 }}>Status</div>
-                  <div style={{ fontWeight: 600, color: 'var(--primary)' }}>{profile.status || 'Active'}</div>
+                  <div style={{ fontWeight: 600, color: '#a5b4fc' }}>{profile.status || 'Active'}</div>
                 </div>
               </div>
 

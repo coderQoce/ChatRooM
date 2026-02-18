@@ -98,13 +98,13 @@ const SettingsPage = () => {
 
   const Section = ({ title, children }) => (
     <div className="cr-card" style={{ padding: 24, marginBottom: 16 }}>
-      <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 16, color: 'var(--primary)' }}>{title}</h3>
+      <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 16, background: 'linear-gradient(135deg, #a5b4fc, #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{title}</h3>
       {children}
     </div>
   );
 
   const Row = ({ label, value }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,.06)' }}>
       <span style={{ color: 'var(--text-secondary)', fontSize: '.9rem' }}>{label}</span>
       <span style={{ fontWeight: 600, fontSize: '.9rem' }}>{value}</span>
     </div>
@@ -113,7 +113,7 @@ const SettingsPage = () => {
   const Modal = ({ show, onClose, title, children }) => {
     if (!show) return null;
     return (
-      <div className="fade-in" style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.4)' }} onClick={onClose}>
+      <div className="fade-in" style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.6)' }} onClick={onClose}>
         <div className="slide-up cr-card modal-card" style={{ width: '100%', maxWidth: 420, maxHeight: '80vh', overflow: 'auto', padding: 0 }} onClick={e => e.stopPropagation()}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
             <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>{title}</h3>
@@ -129,7 +129,7 @@ const SettingsPage = () => {
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       {/* Toast */}
       {toast && (
-        <div className="toast-cr">
+        <div className="fade-in" style={{ position: 'fixed', top: 20, right: 20, zIndex: 2000, padding: '12px 20px', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, var(--primary), var(--accent))', color: '#fff', fontWeight: 600, fontSize: '.9rem', boxShadow: '0 8px 32px rgba(99,102,241,.3)', backdropFilter: 'blur(12px)' }}>
           {toast}
         </div>
       )}
@@ -169,13 +169,13 @@ const SettingsPage = () => {
       </Modal>
 
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)', padding: '0 16px', height: 60, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 4px 20px rgba(99,102,241,.25)' }}>
+      <div style={{ background: 'rgba(255,255,255,.04)', backdropFilter: 'blur(24px) saturate(1.4)', WebkitBackdropFilter: 'blur(24px) saturate(1.4)', borderBottom: '1px solid rgba(255,255,255,.08)', padding: '0 16px', height: 58, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 4px 24px rgba(0,0,0,.15)' }}>
         <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center', borderRadius: 8, transition: 'background .15s' }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
           onMouseLeave={e => e.currentTarget.style.background = 'none'}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
-        <span style={{ color: '#fff', fontWeight: 800, fontSize: '1.05rem', letterSpacing: '-0.02em' }}>Settings</span>
+        <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.05rem' }}>Settings</span>
       </div>
 
       <div style={{ flex: 1, maxWidth: 560, margin: '0 auto', padding: '24px 16px', width: '100%' }}>
@@ -184,7 +184,7 @@ const SettingsPage = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
             <div style={{ position: 'relative' }}>
               {avatarUrl ? (
-                <img src={avatarUrl} alt="avatar" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--primary-light)' }} />
+                <img src={avatarUrl} alt="avatar" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(99,102,241,.3)' }} />
               ) : (
                 <div className="avatar avatar-lg" style={{ background: getColor(user?.username) }}>
                   {(user?.username || 'U').charAt(0).toUpperCase()}
@@ -220,10 +220,10 @@ const SettingsPage = () => {
           <Row label="Username" value={user?.username || '-'} />
           <Row label="Email" value={user?.email || '-'} />
           <Row label="Friend Code" value={
-            <span style={{ fontFamily: 'monospace', letterSpacing: 1, color: 'var(--primary)', fontWeight: 700 }}>{user?.uniqueCode || '-'}</span>
+            <span style={{ fontFamily: 'monospace', letterSpacing: 1, color: '#a5b4fc', fontWeight: 700 }}>{user?.uniqueCode || '-'}</span>
           } />
           <Row label="Status" value={
-            <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Active</span>
+            <span style={{ color: '#a5b4fc', fontWeight: 600 }}>Active</span>
           } />
         </Section>
 

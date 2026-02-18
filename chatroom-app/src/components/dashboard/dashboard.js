@@ -136,7 +136,7 @@ const Dashboard = () => {
   const Modal = ({ show, onClose, title, children }) => {
     if (!show) return null;
     return (
-      <div className="fade-in" style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.4)' }} onClick={onClose}>
+      <div className="fade-in" style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.6)' }} onClick={onClose}>
         <div className="slide-up cr-card modal-card" style={{ width: '100%', maxWidth: 440, maxHeight: '80vh', overflow: 'auto', padding: 0 }} onClick={e => e.stopPropagation()}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
             <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>{title}</h3>
@@ -152,7 +152,7 @@ const Dashboard = () => {
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       {/* Toast */}
       {toast && (
-        <div className="fade-in" style={{ position: 'fixed', top: 20, right: 20, zIndex: 2000, padding: '12px 20px', borderRadius: 'var(--radius-md)', background: 'var(--primary)', color: '#fff', fontWeight: 600, fontSize: '.9rem', boxShadow: 'var(--shadow-md)' }}>
+        <div className="fade-in" style={{ position: 'fixed', top: 20, right: 20, zIndex: 2000, padding: '12px 20px', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, var(--primary), var(--accent))', color: '#fff', fontWeight: 600, fontSize: '.9rem', boxShadow: '0 8px 32px rgba(99,102,241,.3)', backdropFilter: 'blur(12px)' }}>
           {toast}
         </div>
       )}
@@ -171,7 +171,7 @@ const Dashboard = () => {
           </div>
         </form>
         {searchResult && (
-          <div style={{ marginTop: 16, padding: 16, background: '#f8f9fa', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+          <div style={{ marginTop: 16, padding: 16, background: 'rgba(255,255,255,.05)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,.08)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
               <Avatar name={searchResult.username} size={44} picture={searchResult.profilePicture} />
               <div>
@@ -211,7 +211,7 @@ const Dashboard = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {friends.map(f => (
               <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 'var(--radius-sm)', transition: 'background .15s' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#f0f2f5'}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <Avatar name={f.username} size={42} picture={f.profilePicture} />
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -219,8 +219,12 @@ const Dashboard = () => {
                   <div style={{ fontSize: '.8rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.email}</div>
                 </div>
                 <div style={{ display: 'flex', gap: 4 }}>
-                  <button className="btn-cr btn-primary-cr" style={{ padding: '5px 10px', fontSize: '.78rem' }} onClick={() => { setShowFriendsList(false); navigate(`/chat/${f.id}`); }}>Chat</button>
-                  <button className="btn-cr btn-ghost-cr" style={{ padding: '5px 10px', fontSize: '.78rem' }} onClick={() => { setShowFriendsList(false); navigate(`/user/${f.id}`); }}>Profile</button>
+                  <button className="btn-cr btn-primary-cr" style={{ flex: 1, padding: '5px 10px', fontSize: '.78rem' }} onClick={() => { setShowFriendsList(false); navigate(`/chat/${f.id}`); }}>
+                    Chat
+                  </button>
+                  <button className="btn-cr btn-ghost-cr" style={{ padding: '5px 10px', fontSize: '.78rem' }} onClick={() => { setShowFriendsList(false); navigate(`/user/${f.id}`); }}>
+                    Profile
+                  </button>
                 </div>
               </div>
             ))}
@@ -243,7 +247,7 @@ const Dashboard = () => {
             {friends.map(f => (
               <div key={f.id} onClick={() => { setShowNewChat(false); navigate(`/chat/${f.id}`); }}
                 style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', transition: 'background .15s' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#f0f2f5'}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <Avatar name={f.username} size={40} picture={f.profilePicture} />
                 <span style={{ fontWeight: 500 }}>{f.username}</span>
@@ -254,28 +258,24 @@ const Dashboard = () => {
       </Modal>
 
       {/* Header */}
-      <header style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)', padding: '0 20px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 4px 20px rgba(99,102,241,.25)' }}>
+      <header style={{ background: 'rgba(255,255,255,.04)', backdropFilter: 'blur(24px) saturate(1.4)', WebkitBackdropFilter: 'blur(24px) saturate(1.4)', borderBottom: '1px solid rgba(255,255,255,.08)', padding: '0 20px', height: 58, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 4px 24px rgba(0,0,0,.15)' }}>
         <div className="dashboard-header-inner">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-            </div>
-            <span style={{ color: '#fff', fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.02em' }}>ChatRooM</span>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+            <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.15rem' }}>ChatRooM</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             {user?.profilePicture ? (
-              <img src={`${API_URL}${user.profilePicture}`} alt={user?.username} style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2.5px solid rgba(255,255,255,.35)', cursor: 'pointer', transition: 'transform .2s, border-color .2s' }} onClick={() => navigate('/settings')}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.6)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.35)'; }} />
+              <img src={`${API_URL}${user.profilePicture}`} alt={user?.username} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,.3)', cursor: 'pointer' }} onClick={() => navigate('/settings')} />
             ) : (
-              <div className="avatar" style={{ width: 36, height: 36, fontSize: 14, background: getColor(user?.username), border: '2.5px solid rgba(255,255,255,.35)', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }} onClick={() => navigate('/settings')}>
+              <div className="avatar" style={{ width: 34, height: 34, fontSize: 14, background: getColor(user?.username), border: '2px solid rgba(255,255,255,.3)', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                 {(user?.username || 'U').charAt(0).toUpperCase()}
               </div>
             )}
-            <button onClick={logout} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer', padding: 8, display: 'flex', alignItems: 'center', borderRadius: 10, transition: 'all .2s' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.2)'; e.currentTarget.style.transform = 'scale(1.05)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.1)'; e.currentTarget.style.transform = 'scale(1)'; }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+            <button onClick={logout} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center', borderRadius: 8, transition: 'background .15s' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.15)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
             </button>
           </div>
         </div>
@@ -298,10 +298,10 @@ const Dashboard = () => {
             {/* Friend Code */}
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: '.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>Your Friend Code</div>
-              <div onClick={handleCopyCode} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--primary-light)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', transition: 'all .2s' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#ddd6fe'}
-                onMouseLeave={e => e.currentTarget.style.background = 'var(--primary-light)'}>
-                <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-dark)', letterSpacing: 2 }}>{user?.uniqueCode || 'NOCODE'}</span>
+              <div onClick={handleCopyCode} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(99,102,241,.1)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', transition: 'all .15s', border: '1px solid rgba(99,102,241,.15)' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(99,102,241,.18)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(99,102,241,.1)'} >
+                <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1.1rem', color: '#a5b4fc', letterSpacing: 2 }}>{user?.uniqueCode || 'NOCODE'}</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
               </div>
               <div style={{ fontSize: '.75rem', color: 'var(--text-secondary)', marginTop: 4 }}>Click to copy</div>
@@ -310,9 +310,9 @@ const Dashboard = () => {
             {/* Stats */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               {[{ label: 'Friends', value: friends.length }, { label: 'Chats', value: chats.length }].map((s, i) => (
-                <div key={i} style={{ textAlign: 'center', padding: '14px 8px', background: 'linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--primary)', letterSpacing: '-0.02em' }}>{s.value}</div>
-                  <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>{s.label}</div>
+                <div key={i} style={{ textAlign: 'center', padding: '12px 8px', background: 'rgba(255,255,255,.04)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(255,255,255,.06)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '1.2rem', color: '#a5b4fc' }}>{s.value}</div>
+                  <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -357,7 +357,7 @@ const Dashboard = () => {
               {!chatsLoading && !chatsError && chats.length === 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center' }}>
                   <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                   </div>
                   <h4 style={{ fontWeight: 700, marginBottom: 8 }}>No conversations yet</h4>
                   <p style={{ color: 'var(--text-secondary)', maxWidth: 300, marginBottom: 20 }}>Find friends and start chatting!</p>
@@ -369,14 +369,14 @@ const Dashboard = () => {
               )}
               {!chatsLoading && !chatsError && chats.length > 0 && chats.map(c => (
                 <div key={c.user?.id} onClick={() => navigate(`/chat/${c.user.id}`)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', cursor: 'pointer', borderBottom: '1px solid var(--border)', transition: 'all .15s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#f0f2f5'}
+                  style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,.05)', transition: 'background .12s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   <Avatar name={c.user?.username} size={48} picture={c.user?.profilePicture} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
                       <span style={{ fontWeight: 600, fontSize: '.95rem' }}>{c.user?.username}</span>
-                      <span style={{ fontSize: '.73rem', color: 'var(--text-secondary)', flexShrink: 0 }}>{formatTime(c.lastMessage?.createdAt)}</span>
+                      <span style={{ fontSize: '.75rem', color: 'var(--text-secondary)', flexShrink: 0 }}>{formatTime(c.lastMessage?.createdAt)}</span>
                     </div>
                     <div style={{ fontSize: '.87rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {c.lastMessage?.content || 'Start a conversation'}

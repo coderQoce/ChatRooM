@@ -127,9 +127,11 @@ const ChatPage = () => {
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
       {/* ===== Header ===== */}
       <div style={{
-        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)',
-        padding: '0 14px', height: 64, display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
-        boxShadow: '0 4px 20px rgba(99,102,241,.25)'
+        background: 'rgba(255,255,255,.04)',
+        backdropFilter: 'blur(24px) saturate(1.4)', WebkitBackdropFilter: 'blur(24px) saturate(1.4)',
+        borderBottom: '1px solid rgba(255,255,255,.08)',
+        padding: '0 12px', height: 62, display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
+        boxShadow: '0 4px 24px rgba(0,0,0,.15)'
       }}>
         <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center', borderRadius: 8, transition: 'background .15s' }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
@@ -138,15 +140,15 @@ const ChatPage = () => {
         </button>
 
         {otherUserProfile?.profilePicture ? (
-          <img src={`${API_URL}${otherUserProfile.profilePicture}`} alt={otherName} style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', border: '2.5px solid rgba(255,255,255,.35)', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }} />
+          <img src={`${API_URL}${otherUserProfile.profilePicture}`} alt={otherName} style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,.3)', flexShrink: 0 }} />
         ) : (
-          <div className="avatar" style={{ width: 42, height: 42, fontSize: 17, background: getColor(otherName), border: '2.5px solid rgba(255,255,255,.35)', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
+          <div className="avatar" style={{ width: 42, height: 42, fontSize: 17, background: getColor(otherName), border: '2px solid rgba(255,255,255,.3)' }}>
             {otherName.charAt(0).toUpperCase()}
           </div>
         )}
 
         <div style={{ flex: 1 }}>
-          <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', lineHeight: 1.2, letterSpacing: '-0.01em' }}>{otherName}</div>
+          <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', lineHeight: 1.2 }}>{otherName}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <div style={{ width: 7, height: 7, borderRadius: '50%', background: otherUserProfile?.status === 'online' ? '#22c55e' : '#94a3b8' }} />
             <span style={{ color: 'rgba(255,255,255,.65)', fontSize: '.76rem' }}>
@@ -174,7 +176,7 @@ const ChatPage = () => {
       {/* ===== Messages ===== */}
       <div style={{
         flex: 1, overflowY: 'auto', padding: '12px 0',
-        background: `var(--bg-chat) url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.04'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2l4 3.5-4 3zM0 20.5V18h20v-2H0v-2l-4 3.5 4 3z'/%3E%3C/g%3E%3C/svg%3E")`,
+        background: `var(--bg-chat) url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.02'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2l4 3.5-4 3zM0 20.5V18h20v-2H0v-2l-4 3.5 4 3z'/%3E%3C/g%3E%3C/svg%3E")`,
       }}>
         <div style={{ maxWidth: 780, margin: '0 auto', padding: '0 10px' }}>
           {loading && (
@@ -212,8 +214,9 @@ const ChatPage = () => {
                 onMouseLeave={() => contextMenuMsgId === m.id && setContextMenuMsgId(null)}>
                 <div style={{
                   maxWidth: '70%', padding: '9px 12px 6px', borderRadius: 12,
-                  background: isMine ? 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)' : 'var(--white)',
-                  boxShadow: isMine ? 'none' : '0 1px 3px rgba(0,0,0,.06)',
+                  background: isMine ? 'linear-gradient(135deg, rgba(99,102,241,.2) 0%, rgba(139,92,246,.15) 100%)' : 'rgba(255,255,255,.06)',
+                  boxShadow: isMine ? '0 2px 8px rgba(99,102,241,.1)' : '0 2px 8px rgba(0,0,0,.1)',
+                  border: isMine ? '1px solid rgba(99,102,241,.15)' : '1px solid rgba(255,255,255,.06)',
                   borderTopRightRadius: isMine ? 2 : 12,
                   borderTopLeftRadius: isMine ? 12 : 2,
                   position: 'relative', cursor: 'pointer'
@@ -230,15 +233,15 @@ const ChatPage = () => {
                 {contextMenuMsgId === m.id && (
                   <div className="fade-in" style={{
                     position: 'absolute', top: -6, [isMine ? 'right' : 'left']: 0, zIndex: 10,
-                    background: 'var(--white)', borderRadius: 'var(--radius-sm)', boxShadow: 'var(--shadow-md)',
-                    border: '1px solid var(--border)', overflow: 'hidden', transform: 'translateY(-100%)'
+                    background: 'rgba(30,25,60,.95)', backdropFilter: 'blur(20px)', borderRadius: 'var(--radius-sm)', boxShadow: 'var(--shadow-md)',
+                    border: '1px solid rgba(255,255,255,.1)', overflow: 'hidden', transform: 'translateY(-100%)'
                   }}>
                     <button onClick={(e) => { e.stopPropagation(); deleteMessage(m.id); }} style={{
                       display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', border: 'none',
                       background: 'none', color: 'var(--danger)', fontSize: '.85rem', fontWeight: 600,
                       cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background .12s'
                     }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'var(--danger-light)'}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(244,63,94,.12)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'none'}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                       Delete
@@ -253,7 +256,7 @@ const ChatPage = () => {
       </div>
 
       {/* ===== Composer ===== */}
-      <div style={{ background: 'var(--white)', padding: '10px 12px 12px', borderTop: '1px solid var(--border)', flexShrink: 0, boxShadow: '0 -2px 10px rgba(0,0,0,.03)' }}>
+      <div style={{ background: 'rgba(255,255,255,.04)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '8px 10px 10px', borderTop: '1px solid rgba(255,255,255,.08)', flexShrink: 0 }}>
         <div style={{ maxWidth: 780, margin: '0 auto' }}>
           <form onSubmit={sendMessage} style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
             <div style={{ flex: 1, position: 'relative' }}>
@@ -266,10 +269,10 @@ const ChatPage = () => {
                 disabled={sending}
                 rows={1}
                 style={{
-                  width: '100%', resize: 'none', border: '1.5px solid var(--border)', borderRadius: 24,
-                  padding: '12px 20px', fontSize: '.93rem', fontFamily: 'inherit', color: 'var(--text)',
-                  background: '#f8fafc', outline: 'none', transition: 'all .2s ease',
-                  maxHeight: 120, overflowY: 'auto', lineHeight: 1.45
+                  width: '100%', resize: 'none', border: '1.5px solid var(--border)', borderRadius: 22,
+                  padding: '11px 18px', fontSize: '.93rem', fontFamily: 'inherit', color: 'var(--text)',
+                  background: 'var(--bg)', outline: 'none', transition: 'border-color .15s, box-shadow .15s',
+                  maxHeight: 120, overflowY: 'auto', lineHeight: 1.4
                 }}
                 onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,.12)'; }}
                 onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
@@ -277,7 +280,7 @@ const ChatPage = () => {
             </div>
             <button type="submit" disabled={sending || !hasText} style={{
               width: 46, height: 46, borderRadius: '50%', border: 'none', flexShrink: 0,
-              background: hasText ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)' : '#cbd5e1',
+              background: hasText ? 'linear-gradient(135deg, var(--primary) 0%, var(--accent, #8b5cf6) 100%)' : 'rgba(255,255,255,.08)',
               color: '#fff', cursor: hasText ? 'pointer' : 'default',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'all .2s ease', boxShadow: hasText ? '0 4px 14px rgba(99,102,241,.3)' : 'none',
