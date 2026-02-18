@@ -96,8 +96,8 @@
       "receiverId": "1771436742539",
       "content": "hho",
       "createdAt": "2026-02-18T21:31:23.370Z",
-      "read": false,
-      "readAt": null,
+      "read": true,
+      "readAt": "2026-02-18T21:52:09.579Z",
       "deletedFor": []
     }
   ],
