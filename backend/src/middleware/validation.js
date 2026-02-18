@@ -30,7 +30,7 @@ const searchValidation = [
 ];
 
 const messageValidation = [
-  body('receiverId').isMongoId().withMessage('Invalid receiver ID'),
+  body('receiverId').notEmpty().withMessage('Receiver ID is required'),
   body('content')
     .notEmpty()
     .withMessage('Message content is required')

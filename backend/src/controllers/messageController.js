@@ -1,57 +1,131 @@
-const Message = require('../models/message');
-const User = require('../models/user');
-const Notification = require('../models/notification');
+const { readDB, writeDB, users } = require('../db/db');
+
+const buildMessageResponse = async (message) => {
+  const sender = await users.findById(message.senderId);
+  const receiver = await users.findById(message.receiverId);
+
+  const safeSender = sender ? (() => { const { password, ...rest } = sender; return rest; })() : null;
+  const safeReceiver = receiver ? (() => { const { password, ...rest } = receiver; return rest; })() : null;
+
+  return {
+    ...message,
+    sender: safeSender,
+    receiver: safeReceiver
+  };
+};
+
+// Get recent chats list for current user
+exports.getChats = async (req, res) => {
+  try {
+    const currentUserId = req.user.id;
+    const currentUser = await users.findById(currentUserId);
+    const friendIds = currentUser?.friends || [];
+
+    const db = await readDB();
+    const allMessages = db.messages || [];
+
+    const latestByOtherUser = new Map();
+    for (const m of allMessages) {
+      const involved = m.senderId === currentUserId || m.receiverId === currentUserId;
+      if (!involved) continue;
+
+      const otherUserId = m.senderId === currentUserId ? m.receiverId : m.senderId;
+      if (!friendIds.includes(otherUserId)) continue;
+      if ((m.deletedFor || []).includes(currentUserId)) continue;
+
+      const prev = latestByOtherUser.get(otherUserId);
+      if (!prev || new Date(m.createdAt) > new Date(prev.createdAt)) {
+        latestByOtherUser.set(otherUserId, m);
+      }
+    }
+
+    const chats = [];
+    for (const [otherUserId, lastMessage] of latestByOtherUser.entries()) {
+      const otherUser = await users.findById(otherUserId);
+      if (!otherUser) continue;
+      const { password, ...safeOtherUser } = otherUser;
+
+      chats.push({
+        user: safeOtherUser,
+        lastMessage: await buildMessageResponse(lastMessage)
+      });
+    }
+
+    chats.sort((a, b) => new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt));
+
+    res.json({
+      success: true,
+      chats
+    });
+  } catch (error) {
+    console.error('Get chats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching chats',
+      error: error.message
+    });
+  }
+};
 
 // Send message
 exports.sendMessage = async (req, res) => {
   try {
-    const { receiverId, content, messageType = 'text', fileUrl, fileName } = req.body;
-    const senderId = req.user._id;
+    const { receiverId, content } = req.body;
+    const senderId = req.user.id;
 
-    // Check if receiver is a friend
-    const sender = await User.findById(senderId);
-    const isFriend = sender.friends.find(f => 
-      f.user.toString() === receiverId && f.status === 'accepted'
-    );
+    if (!receiverId || !content) {
+      return res.status(400).json({
+        success: false,
+        message: 'receiverId and content are required'
+      });
+    }
 
+    // Validate receiver exists
+    const receiver = await users.findById(receiverId);
+    if (!receiver) {
+      return res.status(404).json({
+        success: false,
+        message: 'Receiver not found'
+      });
+    }
+
+    // Only allow messaging friends
+    const sender = await users.findById(senderId);
+    const isFriend = (sender?.friends || []).includes(receiverId);
     if (!isFriend) {
       return res.status(403).json({
+        success: false,
         message: 'You can only send messages to friends'
       });
     }
 
-    // Create message
-    const message = new Message({
-      sender: senderId,
-      receiver: receiverId,
+    const db = await readDB();
+
+    const newMessage = {
+      id: Date.now().toString(),
+      senderId,
+      receiverId,
       content,
-      messageType,
-      fileUrl,
-      fileName
-    });
+      createdAt: new Date().toISOString(),
+      read: false,
+      readAt: null,
+      deletedFor: []
+    };
 
-    await message.save();
+    db.messages = db.messages || [];
+    db.messages.push(newMessage);
+    await writeDB(db);
 
-    // Populate sender info
-    await message.populate('sender', 'username profilePicture');
-
-    // Create notification for receiver
-    await Notification.create({
-      user: receiverId,
-      type: 'message',
-      title: 'New Message',
-      message: `New message from ${sender.username}`,
-      relatedUser: senderId,
-      relatedId: message._id
-    });
+    const messageWithUsers = await buildMessageResponse(newMessage);
 
     res.json({
       success: true,
-      message
+      message: messageWithUsers
     });
   } catch (error) {
     console.error('Send message error:', error);
     res.status(500).json({
+      success: false,
       message: 'Error sending message',
       error: error.message
     });
@@ -62,71 +136,59 @@ exports.sendMessage = async (req, res) => {
 exports.getConversation = async (req, res) => {
   try {
     const { userId } = req.params;
-    const currentUserId = req.user._id;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 50;
-    const skip = (page - 1) * limit;
+    const currentUserId = req.user.id;
 
     // Check if users are friends
-    const currentUser = await User.findById(currentUserId);
-    const isFriend = currentUser.friends.find(f => 
-      f.user.toString() === userId && f.status === 'accepted'
-    );
+    const currentUser = await users.findById(currentUserId);
+    const isFriend = (currentUser?.friends || []).includes(userId);
 
     if (!isFriend) {
       return res.status(403).json({
+        success: false,
         message: 'You can only view messages with friends'
       });
     }
 
-    // Get messages
-    const messages = await Message.find({
-      $or: [
-        { sender: currentUserId, receiver: userId },
-        { sender: userId, receiver: currentUserId }
-      ],
-      deletedFor: { $ne: currentUserId }
-    })
-      .populate('sender', 'username profilePicture')
-      .populate('receiver', 'username profilePicture')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    const db = await readDB();
+    const allMessages = db.messages || [];
 
-    const total = await Message.countDocuments({
-      $or: [
-        { sender: currentUserId, receiver: userId },
-        { sender: userId, receiver: currentUserId }
-      ],
-      deletedFor: { $ne: currentUserId }
-    });
+    const conversation = allMessages
+      .filter(m => {
+        const betweenUsers =
+          (m.senderId === currentUserId && m.receiverId === userId) ||
+          (m.senderId === userId && m.receiverId === currentUserId);
+        const notDeleted = !(m.deletedFor || []).includes(currentUserId);
+        return betweenUsers && notDeleted;
+      })
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-    // Mark messages as read
-    await Message.updateMany(
-      {
-        sender: userId,
-        receiver: currentUserId,
-        read: false
-      },
-      {
-        read: true,
-        readAt: new Date()
+    // Mark messages as read (messages from other user to current user)
+    let updated = false;
+    for (const msg of allMessages) {
+      if (msg.senderId === userId && msg.receiverId === currentUserId && msg.read === false) {
+        msg.read = true;
+        msg.readAt = new Date().toISOString();
+        updated = true;
       }
-    );
+    }
+    if (updated) {
+      db.messages = allMessages;
+      await writeDB(db);
+    }
+
+    const responseMessages = [];
+    for (const msg of conversation) {
+      responseMessages.push(await buildMessageResponse(msg));
+    }
 
     res.json({
       success: true,
-      messages: messages.reverse(), // Return in chronological order
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      messages: responseMessages
     });
   } catch (error) {
     console.error('Get conversation error:', error);
     res.status(500).json({
+      success: false,
       message: 'Error fetching conversation',
       error: error.message
     });
@@ -137,29 +199,34 @@ exports.getConversation = async (req, res) => {
 exports.deleteMessage = async (req, res) => {
   try {
     const { messageId } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
-    const message = await Message.findById(messageId);
+    const db = await readDB();
+    const allMessages = db.messages || [];
+    const message = allMessages.find(m => m.id === messageId);
 
     if (!message) {
       return res.status(404).json({
+        success: false,
         message: 'Message not found'
       });
     }
 
     // Check if user is part of the conversation
-    if (message.sender.toString() !== userId.toString() && 
-        message.receiver.toString() !== userId.toString()) {
+    if (message.senderId !== userId && message.receiverId !== userId) {
       return res.status(403).json({
-        message: 'You can only delete your own messages'
+        success: false,
+        message: 'You can only delete messages from your conversations'
       });
     }
 
-    // Add user to deletedFor array
+    message.deletedFor = message.deletedFor || [];
     if (!message.deletedFor.includes(userId)) {
       message.deletedFor.push(userId);
-      await message.save();
     }
+
+    db.messages = allMessages;
+    await writeDB(db);
 
     res.json({
       success: true,
@@ -167,6 +234,7 @@ exports.deleteMessage = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: 'Error deleting message',
       error: error.message
     });
@@ -177,19 +245,24 @@ exports.deleteMessage = async (req, res) => {
 exports.markAsRead = async (req, res) => {
   try {
     const { userId } = req.params;
-    const currentUserId = req.user._id;
+    const currentUserId = req.user.id;
 
-    await Message.updateMany(
-      {
-        sender: userId,
-        receiver: currentUserId,
-        read: false
-      },
-      {
-        read: true,
-        readAt: new Date()
+    const db = await readDB();
+    const allMessages = db.messages || [];
+    let updated = false;
+
+    for (const msg of allMessages) {
+      if (msg.senderId === userId && msg.receiverId === currentUserId && msg.read === false) {
+        msg.read = true;
+        msg.readAt = new Date().toISOString();
+        updated = true;
       }
-    );
+    }
+
+    if (updated) {
+      db.messages = allMessages;
+      await writeDB(db);
+    }
 
     res.json({
       success: true,
@@ -197,6 +270,7 @@ exports.markAsRead = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: 'Error marking messages as read',
       error: error.message
     });

@@ -6,6 +6,7 @@ const auth = require('../middleware/auth');
 router.get('/search', auth, userController.searchByCode);
 router.get('/:userId', auth, userController.getUserById);
 router.put('/profile', auth, userController.updateProfile);
+router.delete('/account', auth, userController.deleteAccount);
 router.get('/', auth, userController.getAllUsers); // Debug route
 
 module.exports = router;

@@ -8,36 +8,36 @@ exports.sendRequest = async (req, res) => {
 
     // Check if trying to add self
     if (userId === currentUser.id) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'You cannot send friend request to yourself' 
+        message: 'You cannot send friend request to yourself'
       });
     }
 
     // Find target user
     const targetUser = await users.findById(userId);
     if (!targetUser) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       });
     }
 
     // Check if already friends
     if (currentUser.friends?.includes(userId)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Already friends with this user' 
+        message: 'Already friends with this user'
       });
     }
 
     // Check if request already exists
     const existingRequest = await friendRequests.findExisting(currentUser.id, userId);
-    
+
     if (existingRequest) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Friend request already sent' 
+        message: 'Friend request already sent'
       });
     }
 
@@ -57,10 +57,10 @@ exports.sendRequest = async (req, res) => {
     });
   } catch (error) {
     console.error('Send request error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Error sending friend request', 
-      error: error.message 
+      message: 'Error sending friend request',
+      error: error.message
     });
   }
 };
@@ -74,11 +74,11 @@ exports.acceptRequest = async (req, res) => {
     // Find request
     const requests = await friendRequests.findAll();
     const request = requests.find(req => req.id === requestId && req.receiverId === currentUser.id);
-    
+
     if (!request) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'Friend request not found' 
+        message: 'Friend request not found'
       });
     }
 
@@ -111,10 +111,10 @@ exports.acceptRequest = async (req, res) => {
     });
   } catch (error) {
     console.error('Accept request error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Error accepting friend request', 
-      error: error.message 
+      message: 'Error accepting friend request',
+      error: error.message
     });
   }
 };
@@ -128,11 +128,11 @@ exports.rejectRequest = async (req, res) => {
     // Find request
     const requests = await friendRequests.findAll();
     const request = requests.find(req => req.id === requestId && req.receiverId === currentUser.id);
-    
+
     if (!request) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'Friend request not found' 
+        message: 'Friend request not found'
       });
     }
 
@@ -145,10 +145,10 @@ exports.rejectRequest = async (req, res) => {
     });
   } catch (error) {
     console.error('Reject request error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Error rejecting friend request', 
-      error: error.message 
+      message: 'Error rejecting friend request',
+      error: error.message
     });
   }
 };
@@ -209,10 +209,10 @@ exports.getFriends = async (req, res) => {
     });
   } catch (error) {
     console.error('Get friends error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Error fetching friends', 
-      error: error.message 
+      message: 'Error fetching friends',
+      error: error.message
     });
   }
 };
@@ -242,10 +242,61 @@ exports.removeFriend = async (req, res) => {
     });
   } catch (error) {
     console.error('Remove friend error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Error removing friend', 
-      error: error.message 
+      message: 'Error removing friend',
+      error: error.message
+    });
+  }
+};
+
+// Directly add friend (MVP)
+exports.addFriend = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUser = req.user;
+
+    if (userId === currentUser.id) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot add yourself'
+      });
+    }
+
+    const otherUser = await users.findById(userId);
+    if (!otherUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const currentFriends = currentUser.friends || [];
+    if (currentFriends.includes(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Already friends with this user'
+      });
+    }
+
+    const updatedCurrentFriends = [...currentFriends, userId];
+    await users.update(currentUser.id, { friends: updatedCurrentFriends });
+
+    const otherFriends = otherUser.friends || [];
+    if (!otherFriends.includes(currentUser.id)) {
+      await users.update(userId, { friends: [...otherFriends, currentUser.id] });
+    }
+
+    res.json({
+      success: true,
+      message: 'Friend added successfully'
+    });
+  } catch (error) {
+    console.error('Add friend error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error adding friend',
+      error: error.message
     });
   }
 };

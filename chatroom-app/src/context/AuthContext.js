@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -10,24 +11,25 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
   const login = async (email, password) => {
     setLoading(true);
     try {
-     
-      const mockUser = {
-        id: '1',
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
         email,
-        username: email.split('@')[0],
-        uniqueCode: 'ABC123',
-        token: 'mock-token',
-        createdAt: new Date().toISOString() 
-      };
-      
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
+        password
+      });
+
+      const { token, user: userData } = response.data;
+      const authPayload = { ...userData, token };
+
+      localStorage.setItem('user', JSON.stringify(authPayload));
+      setUser(authPayload);
       navigate('/dashboard');
     } catch (error) {
       console.error('Login failed:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -36,38 +38,42 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setLoading(true);
     try {
-   
-      const newUser = {
-        id: Date.now().toString(),
-        ...userData,
-        uniqueCode: generateUniqueCode(),
-        token: 'mock-token-' + Date.now(),
-        createdAt: new Date().toISOString()
-      };
-      
-      localStorage.setItem('user', JSON.stringify(newUser));
-      setUser(newUser);
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
+        email: userData.email,
+        username: userData.username,
+        password: userData.password,
+        confirmPassword: userData.confirmPassword
+      });
+
+      const { token, user: createdUser } = response.data;
+      const authPayload = { ...createdUser, token };
+
+      localStorage.setItem('user', JSON.stringify(authPayload));
+      setUser(authPayload);
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/login');
-  };
-
-  const generateUniqueCode = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
+  const logout = async () => {
+    try {
+      const token = user?.token;
+      if (token) {
+        await axios.post(`${API_URL}/api/auth/logout`, null, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+    } catch (err) {
+      console.error('Logout API error:', err);
+    } finally {
+      localStorage.removeItem('user');
+      setUser(null);
+      navigate('/login');
     }
-    return code;
   };
 
   // This Checks if user is logged in on initial load

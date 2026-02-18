@@ -4,6 +4,7 @@ const friendController = require('../controllers/friendController');
 const auth = require('../middleware/auth');
 
 router.get('/', auth, friendController.getFriends);
+router.post('/add/:userId', auth, friendController.addFriend);
 router.post('/request/:userId', auth, friendController.sendRequest);
 router.post('/accept/:requestId', auth, friendController.acceptRequest);
 router.post('/reject/:requestId', auth, friendController.rejectRequest);

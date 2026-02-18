@@ -1,0 +1,106 @@
+{
+  "users": [
+    {
+      "id": "1771436681548",
+      "email": "okequadri23@gmail.com",
+      "username": "qoce",
+      "password": "$2a$10$SLpLpF2KxFlnH0xiRwvgzOnw10t9o9Zu4smWgnVpET1zP/.Mr8WCm",
+      "uniqueCode": "WGQ9SW",
+      "profilePicture": null,
+      "status": "offline",
+      "lastSeen": "2026-02-18T21:32:46.507Z",
+      "friends": [
+        "1771436742539"
+      ],
+      "createdAt": "2026-02-18T17:44:41.548Z",
+      "updatedAt": "2026-02-18T21:32:46.508Z"
+    },
+    {
+      "id": "1771436742539",
+      "email": "qocepes@gmail.com",
+      "username": "UreshiNa",
+      "password": "$2a$10$cP1y1TG5yQuHVYGRekoZ2utg7HoSviULkGt5Ea76//Xq06eUEKm5W",
+      "uniqueCode": "CM3UGI",
+      "profilePicture": "/uploads/avatars/1771436742539-1771449747872.png",
+      "status": "online",
+      "lastSeen": "2026-02-18T21:33:03.662Z",
+      "friends": [
+        "1771436681548",
+        "1771450263415"
+      ],
+      "createdAt": "2026-02-18T17:45:42.539Z",
+      "updatedAt": "2026-02-18T21:33:03.662Z"
+    },
+    {
+      "id": "1771450263415",
+      "email": "onyxclothings01@gmail.com",
+      "username": "Ureshi",
+      "password": "$2a$10$JqtAyktvd1MsLXEdGFbUUumTWHQGMOggCHl70RChHt48851EUjm7O",
+      "uniqueCode": "H5QZN2",
+      "profilePicture": null,
+      "status": "offline",
+      "lastSeen": "2026-02-18T21:32:31.160Z",
+      "friends": [
+        "1771436742539"
+      ],
+      "createdAt": "2026-02-18T21:31:03.415Z",
+      "updatedAt": "2026-02-18T21:32:31.161Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "1771438044972",
+      "senderId": "1771436681548",
+      "receiverId": "1771436742539",
+      "content": "hiii",
+      "createdAt": "2026-02-18T18:07:24.972Z",
+      "read": true,
+      "readAt": "2026-02-18T18:19:21.037Z",
+      "deletedFor": []
+    },
+    {
+      "id": "1771438766517",
+      "senderId": "1771436742539",
+      "receiverId": "1771436681548",
+      "content": "hey sup",
+      "createdAt": "2026-02-18T18:19:26.517Z",
+      "read": true,
+      "readAt": "2026-02-18T18:19:44.038Z",
+      "deletedFor": []
+    },
+    {
+      "id": "1771440947811",
+      "senderId": "1771436681548",
+      "receiverId": "1771436742539",
+      "content": "hi",
+      "createdAt": "2026-02-18T18:55:47.811Z",
+      "read": true,
+      "readAt": "2026-02-18T19:28:00.446Z",
+      "deletedFor": []
+    },
+    {
+      "id": "1771443053988",
+      "senderId": "1771436742539",
+      "receiverId": "1771436681548",
+      "content": "yooo",
+      "createdAt": "2026-02-18T19:30:53.988Z",
+      "read": true,
+      "readAt": "2026-02-18T21:22:42.574Z",
+      "deletedFor": [
+        "1771436742539"
+      ]
+    },
+    {
+      "id": "1771450283370",
+      "senderId": "1771450263415",
+      "receiverId": "1771436742539",
+      "content": "hho",
+      "createdAt": "2026-02-18T21:31:23.370Z",
+      "read": false,
+      "readAt": null,
+      "deletedFor": []
+    }
+  ],
+  "calls": [],
+  "friendRequests": []
+}
