@@ -127,9 +127,9 @@ const ChatPage = () => {
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
       {/* ===== Header ===== */}
       <div style={{
-        background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent, #8b5cf6) 100%)',
-        padding: '0 12px', height: 62, display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
-        boxShadow: '0 2px 12px rgba(99,102,241,.25)'
+        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)',
+        padding: '0 14px', height: 64, display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
+        boxShadow: '0 4px 20px rgba(99,102,241,.25)'
       }}>
         <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center', borderRadius: 8, transition: 'background .15s' }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
@@ -138,15 +138,15 @@ const ChatPage = () => {
         </button>
 
         {otherUserProfile?.profilePicture ? (
-          <img src={`${API_URL}${otherUserProfile.profilePicture}`} alt={otherName} style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,.3)', flexShrink: 0 }} />
+          <img src={`${API_URL}${otherUserProfile.profilePicture}`} alt={otherName} style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', border: '2.5px solid rgba(255,255,255,.35)', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,.15)' }} />
         ) : (
-          <div className="avatar" style={{ width: 42, height: 42, fontSize: 17, background: getColor(otherName), border: '2px solid rgba(255,255,255,.3)' }}>
+          <div className="avatar" style={{ width: 42, height: 42, fontSize: 17, background: getColor(otherName), border: '2.5px solid rgba(255,255,255,.35)', boxShadow: '0 2px 8px rgba(0,0,0,.15)' }}>
             {otherName.charAt(0).toUpperCase()}
           </div>
         )}
 
         <div style={{ flex: 1 }}>
-          <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', lineHeight: 1.2 }}>{otherName}</div>
+          <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', lineHeight: 1.2, letterSpacing: '-0.01em' }}>{otherName}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <div style={{ width: 7, height: 7, borderRadius: '50%', background: otherUserProfile?.status === 'online' ? '#22c55e' : '#94a3b8' }} />
             <span style={{ color: 'rgba(255,255,255,.65)', fontSize: '.76rem' }}>
@@ -253,7 +253,7 @@ const ChatPage = () => {
       </div>
 
       {/* ===== Composer ===== */}
-      <div style={{ background: 'var(--white)', padding: '8px 10px 10px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
+      <div style={{ background: 'var(--white)', padding: '10px 12px 12px', borderTop: '1px solid var(--border)', flexShrink: 0, boxShadow: '0 -2px 10px rgba(0,0,0,.03)' }}>
         <div style={{ maxWidth: 780, margin: '0 auto' }}>
           <form onSubmit={sendMessage} style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
             <div style={{ flex: 1, position: 'relative' }}>
@@ -266,10 +266,10 @@ const ChatPage = () => {
                 disabled={sending}
                 rows={1}
                 style={{
-                  width: '100%', resize: 'none', border: '1.5px solid var(--border)', borderRadius: 22,
-                  padding: '11px 18px', fontSize: '.93rem', fontFamily: 'inherit', color: 'var(--text)',
-                  background: 'var(--bg)', outline: 'none', transition: 'border-color .15s, box-shadow .15s',
-                  maxHeight: 120, overflowY: 'auto', lineHeight: 1.4
+                  width: '100%', resize: 'none', border: '1.5px solid var(--border)', borderRadius: 24,
+                  padding: '12px 20px', fontSize: '.93rem', fontFamily: 'inherit', color: 'var(--text)',
+                  background: '#f8fafc', outline: 'none', transition: 'all .2s ease',
+                  maxHeight: 120, overflowY: 'auto', lineHeight: 1.45
                 }}
                 onFocus={e => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 3px rgba(99,102,241,.12)'; }}
                 onBlur={e => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
@@ -277,7 +277,7 @@ const ChatPage = () => {
             </div>
             <button type="submit" disabled={sending || !hasText} style={{
               width: 46, height: 46, borderRadius: '50%', border: 'none', flexShrink: 0,
-              background: hasText ? 'linear-gradient(135deg, var(--primary) 0%, var(--accent, #8b5cf6) 100%)' : '#d1d5db',
+              background: hasText ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)' : '#cbd5e1',
               color: '#fff', cursor: hasText ? 'pointer' : 'default',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'all .2s ease', boxShadow: hasText ? '0 4px 14px rgba(99,102,241,.3)' : 'none',

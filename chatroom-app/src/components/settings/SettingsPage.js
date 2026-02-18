@@ -129,7 +129,7 @@ const SettingsPage = () => {
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       {/* Toast */}
       {toast && (
-        <div className="fade-in" style={{ position: 'fixed', top: 20, right: 20, zIndex: 2000, padding: '12px 20px', borderRadius: 'var(--radius-md)', background: 'var(--primary)', color: '#fff', fontWeight: 600, fontSize: '.9rem', boxShadow: 'var(--shadow-md)' }}>
+        <div className="toast-cr">
           {toast}
         </div>
       )}
@@ -169,13 +169,13 @@ const SettingsPage = () => {
       </Modal>
 
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%)', padding: '0 16px', height: 58, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 2px 12px rgba(99,102,241,.2)' }}>
+      <div style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)', padding: '0 16px', height: 60, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 4px 20px rgba(99,102,241,.25)' }}>
         <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center', borderRadius: 8, transition: 'background .15s' }}
           onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
           onMouseLeave={e => e.currentTarget.style.background = 'none'}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
-        <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.05rem' }}>Settings</span>
+        <span style={{ color: '#fff', fontWeight: 800, fontSize: '1.05rem', letterSpacing: '-0.02em' }}>Settings</span>
       </div>
 
       <div style={{ flex: 1, maxWidth: 560, margin: '0 auto', padding: '24px 16px', width: '100%' }}>
