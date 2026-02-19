@@ -2,12 +2,14 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { useCall } from '../../context/CallContext';
 
 const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#0ea5e9', '#f43f5e', '#7c3aed'];
 const getColor = (name) => COLORS[(name || '').charCodeAt(0) % COLORS.length];
 
 const ChatPage = () => {
   const { user: currentUser } = useAuth();
+  const { startCall } = useCall();
   const { userId } = useParams();
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
@@ -158,12 +160,28 @@ const ChatPage = () => {
         </div>
 
         <div style={{ display: 'flex', gap: 4 }}>
+          {/* Audio Call */}
+          <button style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.8)', cursor: 'pointer', padding: 8, borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'background .15s' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'none'}
+            onClick={() => startCall({ id: userId, username: otherName, profilePicture: otherUserProfile?.profilePicture }, 'audio')}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+          </button>
+          {/* Video Call */}
+          <button style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.8)', cursor: 'pointer', padding: 8, borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'background .15s' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'none'}
+            onClick={() => startCall({ id: userId, username: otherName, profilePicture: otherUserProfile?.profilePicture }, 'video')}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" /></svg>
+          </button>
+          {/* Profile */}
           <button style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.8)', cursor: 'pointer', padding: 8, borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'background .15s' }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
             onMouseLeave={e => e.currentTarget.style.background = 'none'}
             onClick={() => navigate(`/user/${userId}`)}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
           </button>
+          {/* Refresh */}
           <button style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.8)', cursor: 'pointer', padding: 8, borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'background .15s' }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
             onMouseLeave={e => e.currentTarget.style.background = 'none'}
