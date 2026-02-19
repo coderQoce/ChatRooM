@@ -23,13 +23,16 @@ const allowedOrigins = [
   'http://localhost:3000'
 ].filter(Boolean);
 
-app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error('Not allowed by CORS'));
-  },
-  credentials: true
-}));
+const corsCheck = (origin, cb) => {
+  if (!origin) return cb(null, true);
+  if (allowedOrigins.includes(origin)) return cb(null, true);
+  if (allowedOrigins.includes(origin.replace(/\/$/, ''))) return cb(null, true);
+  if (origin.match(/^https:\/\/chat-roo-m.*\.vercel\.app$/)) return cb(null, true);
+  console.log('CORS blocked origin:', origin);
+  cb(new Error('Not allowed by CORS'));
+};
+
+app.use(cors({ origin: corsCheck, credentials: true }));
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
@@ -46,13 +49,7 @@ app.use('/api/upload', uploadRoutes);
 
 /* ===== Socket.IO for WebRTC Signaling ===== */
 const io = new Server(server, {
-  cors: {
-    origin: (origin, cb) => {
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-      cb(new Error('Not allowed by CORS'));
-    },
-    credentials: true
-  },
+  cors: { origin: corsCheck, credentials: true },
   pingTimeout: 60000
 });
 
