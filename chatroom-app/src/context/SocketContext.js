@@ -6,14 +6,24 @@ const SocketContext = createContext();
 
 export const useSocket = () => useContext(SocketContext);
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL;
 
 export const SocketProvider = ({ children }) => {
   const { user } = useAuth();
   const socketRef = useRef(null);
   const [connected, setConnected] = useState(false);
+  const enabled = Boolean(SOCKET_URL);
 
   useEffect(() => {
+    if (!enabled) {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+      setConnected(false);
+      return;
+    }
+
     if (!user?.token) {
       if (socketRef.current) {
         socketRef.current.disconnect();
@@ -23,7 +33,7 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const socket = io(API_URL, {
+    const socket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 10,
@@ -52,10 +62,10 @@ export const SocketProvider = ({ children }) => {
       socketRef.current = null;
       setConnected(false);
     };
-  }, [user?.token]);
+  }, [user?.token, enabled]);
 
   return (
-    <SocketContext.Provider value={{ socket: socketRef.current, connected }}>
+    <SocketContext.Provider value={{ socket: socketRef.current, connected, enabled }}>
       {children}
     </SocketContext.Provider>
   );

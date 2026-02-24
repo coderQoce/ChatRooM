@@ -48,7 +48,12 @@ const ChatPage = () => {
       const response = await axios.get(`${API_URL}/api/messages/conversation/${userId}`, { headers });
       setMessages(response.data.messages || []);
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || 'Failed to load conversation');
+      const msg = err?.response?.data?.message || err?.message || 'Failed to load conversation';
+      if (msg.includes('You can only view messages with friends')) {
+        setError('not_friends');
+      } else {
+        setError(msg);
+      }
     } finally { setLoading(false); }
   };
 
@@ -203,7 +208,32 @@ const ChatPage = () => {
             </div>
           )}
 
-          {!loading && error && <div className="alert-cr alert-cr-danger" style={{ margin: '20px 0' }}>{error}</div>}
+          {!loading && error === 'not_friends' && (
+            <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 400, textAlign: 'center', padding: '20px' }}>
+              <div style={{ width: 80, height: 80, borderRadius: 24, background: 'rgba(244,63,94,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="m22 21-3-3 3-3" /></svg>
+              </div>
+              <h3 style={{ fontWeight: 700, margin: '0 0 6px', color: 'var(--text)' }}>You're not friends yet</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '.9rem', maxWidth: 320, marginBottom: 20 }}>
+                You can only message people who are your friends. Add {otherName} as a friend first to start chatting.
+              </p>
+              <button
+                onClick={() => navigate(`/user/${userId}`)}
+                style={{
+                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent, #8b5cf6) 100%)',
+                  color: '#fff', border: 'none', padding: '10px 24px', borderRadius: 22,
+                  fontWeight: 600, fontSize: '.9rem', cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(99,102,241,.3)', transition: 'all .2s ease'
+                }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                View Profile & Add Friend
+              </button>
+            </div>
+          )}
+
+          {!loading && error && error !== 'not_friends' && <div className="alert-cr alert-cr-danger" style={{ margin: '20px 0' }}>{error}</div>}
 
           {!loading && !error && messages.length === 0 && (
             <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 400, textAlign: 'center' }}>

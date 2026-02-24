@@ -112,12 +112,16 @@ export const CallProvider = ({ children }) => {
 
   // Initiate a call (caller side)
   const startCall = useCallback(async (targetUser, type) => {
+    if (!socket) {
+      console.warn('Calls are disabled: no Socket.IO signaling server configured');
+      return;
+    }
     if (callState !== 'idle' || !socket) return;
 
     try {
+      setCallState('calling');
       setCallType(type);
       setRemoteUser(targetUser);
-      setCallState('calling');
 
       const stream = await getMedia(type);
       const peer = createPeer(stream);
@@ -167,7 +171,7 @@ export const CallProvider = ({ children }) => {
       console.error('Failed to accept call:', err);
       endCall();
     }
-  }, [socket, remoteUser, callType, getMedia, createPeer, startTimer]);
+  }, [socket, callType, remoteUser, getMedia, createPeer, startTimer]);
 
   // Reject incoming call
   const rejectCall = useCallback(() => {
@@ -289,11 +293,18 @@ export const CallProvider = ({ children }) => {
 
   // Accept with pending offer
   const acceptIncoming = useCallback(() => {
-    if (pendingOfferRef.current) {
+    if (!socket) {
+      console.warn('Calls are disabled: no Socket.IO signaling server configured');
+      return;
+    }
+    try {
+      if (!pendingOfferRef.current) return;
       acceptCall(pendingOfferRef.current);
       pendingOfferRef.current = null;
+    } catch (err) {
+      console.error('Failed to accept incoming call:', err);
     }
-  }, [acceptCall]);
+  }, [acceptCall, socket]);
 
   const value = {
     callState,
